@@ -1,16 +1,12 @@
 <template>
   <div>
-    <button></button>
+    <h1>Showing event #{{ id }}</h1>
   </div>
 </template>
 
 <script>
 export default {
-  data() {
-    return {
-      quore: 'dsdsd'
-    }
-  }
+  props: ['id']
 }
 </script>
 
