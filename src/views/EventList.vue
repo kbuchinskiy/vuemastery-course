@@ -1,9 +1,10 @@
 <template>
   <div>
     <h1>Events Listing</h1>
+    <h3>Events for {{ user.user.name }}</h3>
     <div class="controls-wrapper">
-      <label
-        >Events per page
+      <label>
+        events per page
         <select v-model="eventsPerPage">
           <option
             v-for="option in eventsPerPageOptions"
@@ -31,7 +32,7 @@
       </div>
     </div>
 
-    <event-card v-for="event in events" :key="event.id" :event="event" />
+    <event-card v-for="event in event.events" :key="event.id" :event="event" />
   </div>
 </template>
 
@@ -49,14 +50,14 @@ export default {
     }
   },
   computed: {
-    ...mapState(['events', 'eventsTotal']),
+    ...mapState(['event', 'user']),
     eventsPerPage: {
       get() {
-        return this.$store.state.eventsPerPage
+        return this.$store.state.event.eventsPerPage
       },
       set(eventsPerPage) {
-        this.$store.dispatch('setEventsPerPage', eventsPerPage)
-        this.$store.dispatch('fetchEvents', {
+        this.$store.dispatch('event/setEventsPerPage', eventsPerPage)
+        this.$store.dispatch('event/fetchEvents', {
           perPage: eventsPerPage,
           page: this.page
         })
@@ -66,11 +67,11 @@ export default {
       return parseInt(this.$route.query.page) || 1
     },
     showNextPage() {
-      return this.page * this.eventsPerPage < this.eventsTotal
+      return this.page * this.eventsPerPage < this.event.eventsTotal
     }
   },
   created() {
-    this.$store.dispatch('fetchEvents', {
+    this.$store.dispatch('event/fetchEvents', {
       perPage: this.eventsPerPage,
       page: this.page
     })

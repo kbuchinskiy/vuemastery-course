@@ -32,15 +32,14 @@
   </div>
 </template>
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
   props: ['id'],
-  computed: {
-    ...mapState(['event'])
-  },
+  computed: mapState({ event: state => state.event.event }),
+  methods: mapActions('event', ['fetchEvent']),
   created() {
-    this.$store.dispatch('fetchEvent', this.id)
+    this.fetchEvent(this.id)
   }
 }
 </script>
