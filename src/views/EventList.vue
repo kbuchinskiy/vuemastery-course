@@ -5,9 +5,9 @@
     <div class="controls-wrapper">
       <label>
         events per page
-        <select v-model="eventsPerPage">
+        <select v-model="perPage">
           <option
-            v-for="option in eventsPerPageOptions"
+            v-for="option in perPageOptions"
             :key="option"
             :value="option"
             >{{ option }}</option
@@ -39,42 +39,71 @@
 <script>
 import EventCard from '@/components/EventCard.vue'
 import { mapState } from 'vuex'
+import store from '@/store'
+import nprogress from 'nprogress'
+
+function getEvents(to, next) {
+  const currentPage = parseInt(to.query.page) || 1
+  store
+    .dispatch('event/fetchEvents', {
+      page: currentPage
+    })
+    .then(() => {
+      to.params.page = currentPage
+      next()
+    })
+}
+
 export default {
   name: 'event-list',
   components: {
     EventCard
   },
+  props: {
+    page: {
+      type: Number,
+      required: true
+    }
+  },
   data() {
     return {
-      eventsPerPageOptions: [2, 3, 4]
+      perPageOptions: [2, 3, 4]
     }
   },
   computed: {
     ...mapState(['event', 'user']),
-    eventsPerPage: {
+    perPage: {
       get() {
-        return this.$store.state.event.eventsPerPage
+        return this.$store.state.event.perPage
       },
-      set(eventsPerPage) {
-        this.$store.dispatch('event/setEventsPerPage', eventsPerPage)
-        this.$store.dispatch('event/fetchEvents', {
-          perPage: eventsPerPage,
-          page: this.page
-        })
+      set(perPage) {
+        this.$store.dispatch('event/setperPage', perPage)
+        nprogress.start()
+        this.$store
+          .dispatch('event/fetchEvents', {
+            perPage: perPage,
+            page: this.page
+          })
+          .then(() => {
+            nprogress.done()
+          })
       }
     },
-    page() {
-      return parseInt(this.$route.query.page) || 1
-    },
     showNextPage() {
-      return this.page * this.eventsPerPage < this.event.eventsTotal
+      return this.page * this.event.perPage < this.event.eventsTotal
     }
   },
   created() {
     this.$store.dispatch('event/fetchEvents', {
-      perPage: this.eventsPerPage,
+      perPage: this.perPage,
       page: this.page
     })
+  },
+  beforeRouteEnter(to, from, next) {
+    getEvents(to, next)
+  },
+  beforeRouteUpdate(to, from, next) {
+    getEvents(to, next)
   }
 }
 </script>

@@ -5,7 +5,7 @@ export const namespaced = true
 export const state = {
   events: [],
   eventsTotal: 0,
-  eventsPerPage: 4,
+  perPage: 4,
   event: {}
 }
 
@@ -22,8 +22,8 @@ export const mutations = {
   SET_EVENT(state, event) {
     state.event = event
   },
-  SET_EVENTS_PER_PAGE(state, eventsPerPage) {
-    state.eventsPerPage = eventsPerPage
+  SET_EVENTS_PER_PAGE(state, perPage) {
+    state.perPage = perPage
   }
 }
 
@@ -47,8 +47,8 @@ export const actions = {
         throw error
       })
   },
-  fetchEvents({ commit, dispatch }, { perPage, page }) {
-    EventService.getEvents(perPage, page)
+  fetchEvents({ commit, dispatch, state }, { page }) {
+    return EventService.getEvents(state.perPage, page)
       .then(response => {
         commit('SET_EVENTS', response.data)
         commit('SET_EVENTS_TOTAL', parseInt(response.headers['x-total-count']))
@@ -66,10 +66,12 @@ export const actions = {
     const event = getters.getEventById(id)
     if (event) {
       commit('SET_EVENT', event)
+      return event
     } else {
-      EventService.getEvent(id)
+      return EventService.getEvent(id)
         .then(response => {
           commit('SET_EVENT', response.data)
+          return response.data
         })
         .catch(error => {
           const notification = {
@@ -80,12 +82,12 @@ export const actions = {
         })
     }
   },
-  setEventsPerPage({ commit }, eventsPerPage) {
-    commit('SET_EVENTS_PER_PAGE', eventsPerPage)
+  setperPage({ commit }, perPage) {
+    commit('SET_EVENTS_PER_PAGE', perPage)
   }
 }
 
 export const getters = {
   getEventById: state => id => state.events.find(event => event.id === id),
-  eventsPerPage: state => state.name
+  perPage: state => state.name
 }
