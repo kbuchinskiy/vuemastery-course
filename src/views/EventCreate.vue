@@ -8,34 +8,32 @@
       </select>
 
       <h3>Name & describe your event</h3>
-      <div class="field">
-        <label>Title</label>
-        <input
-          v-model="event.title"
-          type="text"
-          placeholder="Add an event title"
-        />
-      </div>
 
-      <div class="field">
-        <label>Description</label>
-        <input
-          v-model="event.description"
-          type="text"
-          placeholder="Add a description"
-        />
-      </div>
+      <base-input
+        v-model="event.title"
+        type="text"
+        placeholder="Add a title"
+        label="Title"
+        class="field"
+      />
+
+      <base-input
+        v-model="event.description"
+        type="text"
+        placeholder="Add a description"
+        label="Description"
+        class="field"
+      />
 
       <h3>Where is your event?</h3>
-      <div class="field">
-        <label>Location</label>
-        <input
-          v-model="event.location"
-          type="text"
-          placeholder="Add a location"
-        />
-      </div>
 
+      <base-input
+        v-model="event.location"
+        type="text"
+        placeholder="Add a location"
+        label="Location"
+        class="field"
+      />
       <h3>When is your event?</h3>
 
       <div class="field">
@@ -59,6 +57,7 @@
 import nprogress from 'nprogress'
 import Datepicker from 'vuejs-datepicker'
 export default {
+  name: 'event-create',
   components: {
     Datepicker
   },
