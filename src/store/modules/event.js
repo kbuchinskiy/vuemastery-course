@@ -61,25 +61,17 @@ export const actions = {
         dispatch('notification/add', notification, { root: true })
       })
   },
-  fetchEvent({ commit, getters, rootState, dispatch }, id) {
+  fetchEvent({ commit, getters, rootState }, id) {
     console.log(rootState.user.user.name)
     const event = getters.getEventById(id)
     if (event) {
       commit('SET_EVENT', event)
       return event
     } else {
-      return EventService.getEvent(id)
-        .then(response => {
-          commit('SET_EVENT', response.data)
-          return response.data
-        })
-        .catch(error => {
-          const notification = {
-            type: 'error',
-            message: 'There was a problem fetching event: ' + error.message
-          }
-          dispatch('notification/add', notification, { root: true })
-        })
+      return EventService.getEvent(id).then(response => {
+        commit('SET_EVENT', response.data)
+        return response.data
+      })
     }
   },
   setperPage({ commit }, perPage) {

@@ -93,12 +93,6 @@ export default {
       return this.page * this.event.perPage < this.event.eventsTotal
     }
   },
-  created() {
-    this.$store.dispatch('event/fetchEvents', {
-      perPage: this.perPage,
-      page: this.page
-    })
-  },
   beforeRouteEnter(to, from, next) {
     getEvents(to, next)
   },
